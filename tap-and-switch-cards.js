@@ -6,41 +6,28 @@ class TapAndSwitchCards extends HTMLElement {
     this.main = this.ha.shadowRoot.querySelector(
       "home-assistant-main"
     ).shadowRoot;
-    // this.lovelace = this.main.querySelector("ha-panel-lovelace");
     this.lovelace = this.main.querySelector("partial-panel-resolver").querySelector("ha-panel-lovelace");
-    console.log("oubotest",this.lovelace);
-    // this.count = TapAndSwitchCards.idCounter++;
-    // console.log("constructor",this.count);
   }
 
   setConfig(config) {
-    // console.log("config",this.count);
     this.config = config;
     this._refCards = [];
     this._refTitleCard =[];
     this._init__refCards().then(() => {
-      // console.log("this._refCard"+this.count,this._refCards);
       this.render(); 
-      // setTimeout(() => {
-      //   this.shadowRoot.querySelector(".o_nav_button").click();         
-      // }, 0);
-      
     });
     
   }
  
   set hass(hass) {
-    // console.log("hass");
     this._hass = hass;
     if (this._refTitleCard && this._refTitleCard.length > 0) {
       this._refTitleCard.forEach((card) => {  
-          // console.log("not_o_popup");
           card.hass = hass;       
       });
     }
     if (this._refCards) {
       this._refCards.forEach((card) => {  
-          // console.log("not_o_popup");
           card.hass = hass;       
       });
     }
@@ -56,50 +43,26 @@ class TapAndSwitchCards extends HTMLElement {
   }
 
   connectedCallback() {
-    // console.log("cb",this.count);
-   
-    // 取消注册旧的事件处理函数
-    // window.removeEventListener("location-changed", this.handleLocationChanged);
-
-    // 注册新的事件处理函数
-    // window.addEventListener("location-changed", this.handleLocationChanged);
 
   }
 
   disconnectedCallback() {
-    // console.log("discb",this.count);
-    // 在元素被移除时取消注册事件处理函数
-    // window.removeEventListener("location-changed", this.handleLocationChanged);
   }
 
   //生成子卡片Dom，保存到this._refCards数组中
   async _init__refCards() {
-    // console.time('_init__refCards');
     const config = this.config;
     if (window.loadCardHelpers) {
       this.helpers = await window.loadCardHelpers();
     }
-    //配置titleCards。
-    let titlePromises; 
-    if(config.titleCards && (config.titleCards.length > 0)){
-      titlePromises = config.titleCards.map(async (config) => {
-        return await this.createCardElement(config); 
-      });
-      this._refTitleCard = await Promise.all(titlePromises);
-      this._refTitleCard = this._refTitleCard.filter(card => card !== undefined);
-    } 
-
     let promises = config.cards.map(async (config) => {
       let card = await this.createCardElement(config);
-      
         card.setAttribute("data-mainPathName", config.card_path_name);
-        return card;
-      
+        return card;      
     });
 
     this._refCards = await Promise.all(promises);
     this._refCards = this._refCards.filter(card => card !== undefined);
-    // console.timeEnd('_init__refCards');
   }
  
   //将所有的元素，添加到this.shadow
@@ -218,20 +181,15 @@ class TapAndSwitchCards extends HTMLElement {
     style.textContent = `
     :host {
       --nav-height: ${subNavHeight}px;
-      /*--ha-card-border-radius: var(--restore-card-border-radius) !important;*/
       --ha-card-border-radius: unset !important;
       display: flex;
       z-index: 3;
       top: 0;
       left: 0;
-      width: 100%; 
-      /*max-height: calc(100vh - ${mainNavHeight}px);*/
-      /*overflow: auto;*/
       flex-shrink: 0;
       flex-direction: column;
       justify-content: flex-end;
       overscroll-behavior-y: contain;
-      /*min-height: calc(100vh - ${mainNavHeight-1}px);*/
     }
 
     .o_body {
