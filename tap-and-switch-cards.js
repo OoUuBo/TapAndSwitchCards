@@ -1,6 +1,7 @@
 class TapAndSwitchCards extends HTMLElement {
   constructor() {
     super();
+    // this.style.margin = "0px";
     this.shadow = this.attachShadow({ mode: "open" });
     this.ha = document.querySelector("home-assistant");
     this.main = this.ha.shadowRoot.querySelector(
@@ -43,7 +44,7 @@ class TapAndSwitchCards extends HTMLElement {
   }
 
   connectedCallback() {
-
+      this.style.margin = this.config.margin || "0px";   
   }
 
   disconnectedCallback() {
@@ -79,7 +80,7 @@ class TapAndSwitchCards extends HTMLElement {
     this.shadowRoot.innerHTML = "";                  
     
     oHeaderHeight = this.config.sticky_top || 0;
-    console.log("stickytop", this.config.sticky_top);
+    // console.log("stickytop", this.config.sticky_top);
     let header_style = document.createElement("style");
     header_style.textContent = `
     .o_header_title {
@@ -173,6 +174,11 @@ class TapAndSwitchCards extends HTMLElement {
         p.innerText = button.name;
         div.appendChild(p);
       }
+      //圆点
+      let circle = document.createElement("div");
+      circle.setAttribute("class", "o_nav_circle");
+      div.appendChild(circle);
+
       o_nav.appendChild(div);
     });
     //卡片的主体
@@ -181,7 +187,7 @@ class TapAndSwitchCards extends HTMLElement {
     style.textContent = `
     :host {
       --nav-height: ${subNavHeight}px;
-      --ha-card-border-radius: unset !important;
+      /*--ha-card-border-radius: unset !important;*/
       display: flex;
       z-index: 3;
       top: 0;
@@ -243,10 +249,10 @@ class TapAndSwitchCards extends HTMLElement {
       //padding: 5px;
       //background-color: #3498db;
       border: none;
-      border-radius: 5px;
+     /* border-radius: 5px;*/
       cursor: pointer;
       transition: background-color 0.3s;
-      min-width: 80px;
+      flex: 1;
       height: 100%;
       // margin: 10px 10px 10px 10px;
       color: ${this.config.color || "var(--primary-color)"};
@@ -266,8 +272,26 @@ class TapAndSwitchCards extends HTMLElement {
       margin-bottom: auto;
       margin-top: auto;
       color: inherit;
+      font-weight: bold;
     }
     
+    .o_nav_button .o_nav_circle {
+      width: 12px;
+      height: 4px;
+      position: absolute;
+      top: 75%;
+      border-radius: 2px;
+      background: #ff8a00;
+      display: none;
+    }
+
+    .o_nav > :first-child div{
+      display: block;
+    }
+    .o_nav > :first-child{
+      color: black;
+    }
+
     .o_nav_button:active {
       transform: scale(0.9);
     }
@@ -306,10 +330,10 @@ class TapAndSwitchCards extends HTMLElement {
       const o_nav_button_arr = this.shadow.querySelectorAll(".o_nav_button");
       o_nav_button_arr.forEach((element)=>{
         element.style.color = this.config.color || "var(--primary-color)";
-
+        element.querySelector('.o_nav_circle').style.display = 'none';
       });
       event.currentTarget.style.color = this.config.activeColor || "rgba(var(--primary-color), 0.1)" || "var(--state-icon-color)";
-
+      event.currentTarget.querySelector('.o_nav_circle').style.display = 'block';
       //scroll设置
       const hashValue = event.currentTarget.dataset.hash;
       const hashValueArr = hashValue.split("-");
